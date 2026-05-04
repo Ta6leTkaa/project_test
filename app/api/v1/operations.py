@@ -9,11 +9,11 @@ from app.models import User
 
 router = APIRouter()
 
-@router.post("/opperations/income")
+@router.post("/operations/income")
 def add_income(operation: OperationRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return operations_service.add_income(db, current_user, operation)
 
 
-@router.post("/opperations/expense")
+@router.post("/operations/expense")
 def add_expense(operation: OperationRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return operations_service.add_expense(db, current_user, operation)
