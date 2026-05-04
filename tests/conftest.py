@@ -49,6 +49,7 @@ def test_user(db_session):
     db_session.add(user)
     db_session.flush()
     return user
+
 @pytest.fixture
 def test_wallet(db_session, test_user):
     wallet = Wallet(name="card", balance=200, user_id=test_user.id)

@@ -7,7 +7,7 @@ from app.models import User
 def get_balance(db: Session, current_user: User, wallet_name: str | None = None):
     if wallet_name is None:
         wallets = wallets_repository.get_all_wallets(db, current_user.id)
-        return {"total_balance": sum([w.amount for w in wallets])}
+        return {"total_balance": sum([w.balance for w in wallets])}
 
     if not wallets_repository.is_wallet_exist(db, current_user.id, wallet_name):
         raise HTTPException(
