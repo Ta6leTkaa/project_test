@@ -1,8 +1,9 @@
 from fastapi import HTTPException
 from app.database import SessionLocal
-from app.schemas import CreateWalletRequest
+from app.schemas import CreateWalletRequest, WalletResponse
 from app.repository import wallets as wallets_repository
 from app.models import User
+from app.enum import CurrencyEnum
 
 def get_balance(db: Session, current_user: User, wallet_name: str | None = None):
     if wallet_name is None:
@@ -17,19 +18,16 @@ def get_balance(db: Session, current_user: User, wallet_name: str | None = None)
     wallet = wallets_repository.get_wallet_balance_by_name(db, current_user.id, wallet_name)
     return {"wallet": wallet.name, "balance": wallet.balance}
 
-def create_wallet(db: Session, current_user: User, wallet: CreateWalletRequest):
+def create_wallet(db: Session, current_user: User, wallet: CreateWalletRequest) -> WalletResponse:
     if wallets_repository.is_wallet_exist(db, current_user.id, wallet.name):
         raise HTTPException(
             status_code = 400,
             detail = f"Wallet {wallet.name} already exists."
             )
 
-    wallet = wallets_repository.create_wallet(db, current_user.id, wallet.name, wallet.initial_balance)
+    wallet = wallets_repository.create_wallet(db, current_user.id, wallet.name, wallet.initial_balance, wallet.currency)
 
     db.commit()
+    db.refresh(wallet)
 
-    return {
-        "message": "Wallet {wallet.name} successfully.",
-        "wallet": wallet.name,
-        "balance": wallet.balance
-    }
+    return WalletResponse.model_validate(wallet)
