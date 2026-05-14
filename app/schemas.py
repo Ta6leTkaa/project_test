@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 
 from pydantic import BaseModel, Field, field_validator
@@ -54,3 +55,14 @@ class WalletResponse(BaseModel):
     name: str
     balance: Decimal
     currency: CurrencyEnum
+
+class OperationResponse(BaseModel):
+    model_config = {"from_attributes": True}
+    id: int
+    wallet_id: int
+    type: str
+    amount: Decimal
+    currency: CurrencyEnum
+    category: str | None = None
+    subcategory: str | None = None
+    created_at: datetime
